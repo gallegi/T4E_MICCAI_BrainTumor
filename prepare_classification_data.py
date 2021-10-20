@@ -8,7 +8,6 @@ import json
 import os
 import shutil
 from tqdm import tqdm
-import SimpleITK as sitk
 
 import pydicom
 import glob
