@@ -6,6 +6,6 @@
     "CLASSIFICATION_DATA_DIR":"/tf/BrainTumor/data/2DData_Clf_V5/",
     "KFOLD_PATH":"data/train_stratifiedgroupkfold.csv", 
     "SEGMENT_MODEL_DIR":"models/densenet121_2d_segment",
-    "CLASSIFICATION_MODEL_DIR":"models/densenet121_2d_classification",
+    "CLASSIFICATION_MODEL_DIR":"models/eca_nfnet_l0_2d_classification",
     "TEMP_DATA_DIR":"temp"
 }
