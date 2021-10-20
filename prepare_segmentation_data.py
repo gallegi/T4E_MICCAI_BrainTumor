@@ -183,6 +183,7 @@ df = pd.DataFrame(os.listdir(IM_FOLDER_TASK1), columns=['pfolder'])
 print(df)
 
 df['BraTS21ID'] = df['pfolder'].map(lambda x: int(x.split('_')[-1]) if x.startswith('BraTS2021_') else np.nan)
+df = df.dropna()
 
 df = df[~df.BraTS21ID.isin(fold_df.BraTS21ID.tolist())]
 
