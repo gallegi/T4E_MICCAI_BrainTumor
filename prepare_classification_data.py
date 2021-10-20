@@ -244,7 +244,7 @@ if(os.path.exists(OUT_FOLDER)):
                
 candidate = CANDIDATES[0]
 model = get_model(candidate)
-model.load_state_dict(torch.load(candidate['model_path']))
+model.load_state_dict(torch.load(candidate['model_path'], map_location='cpu'))
 model.to(DEVICE)
 
 model.eval()
