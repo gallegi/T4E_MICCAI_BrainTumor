@@ -1,7 +1,7 @@
 {
     "DICOM_DATA_DIR":"data/raw_dicom_data/",
     "TASK1_DIR":"/tf/BrainTumor/data/task1/RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021/", 
-    "CLASSIFICATION_RAW_JPG":"/tf/BrainTumor/data/data/",
+    "CLASSIFICATION_RAW_JPG":"data/raw_jpg_data/data/",
     "SEGMENT_DATA_DIR":"/tf/BrainTumor/data/2DData/", 
     "CLASSIFICATION_DATA_DIR":"/tf/BrainTumor/data/2DData_Clf_V5/",
     "KFOLD_PATH":"data/train_stratifiedgroupkfold.csv", 
