@@ -1,10 +1,11 @@
 {
-    "DICOM_DATA_DIR":"",
+    "DICOM_DATA_DIR":"data/raw_dicom_data/",
     "TASK1_DIR":"/tf/BrainTumor/data/task1/RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021/", 
     "CLASSIFICATION_RAW_PNG":"/tf/BrainTumor/data/data/",
     "SEGMENT_DATA_DIR":"/tf/BrainTumor/data/2DData/", 
     "CLASSIFICATION_DATA_DIR":"/tf/BrainTumor/data/2DData_Clf_V5/",
     "KFOLD_PATH":"data/train_stratifiedgroupkfold.csv", 
-    "SEGMENT_MODEL_DIR":"model/densenet121_2d_segment",
-    "CLASSIFICATION_MODEL_DIR":"models/densenet121_2d_classification"
+    "SEGMENT_MODEL_DIR":"models/densenet121_2d_segment",
+    "CLASSIFICATION_MODEL_DIR":"models/densenet121_2d_classification",
+    "TEMP_DATA_DIR":"temp"
 }
