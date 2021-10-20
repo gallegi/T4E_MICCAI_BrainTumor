@@ -2,3 +2,4 @@ gdown==3.6.4
 pydicom==2.2.2
 segmentation_models_pytorch==0.2.0
 albumentations==1.1.0
+monai==0.7.0
