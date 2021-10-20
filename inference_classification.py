@@ -630,7 +630,7 @@ for clf_candidate in CLF_CANDIDATES:
 
 sub_df = pd.concat(sub_df, axis=1).mean(axis=1).reset_index()
 sub_df.columns = ['BraTS21ID', 'MGMT_value']
-sub_df
+sub_df.to_csv(os.path.join(SETTINGS['TEST_PREDICTION_FILE']), index=False)
 
 
 
