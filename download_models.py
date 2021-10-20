@@ -33,5 +33,5 @@ gdown.download(url, output, quiet=False)
 
 os.makedirs('models/eca_nfnet_l0_2d_classification/FLAIR', exist_ok=True)
 url = 'https://drive.google.com/uc?id=12UBvr4ewswPWzf-8OyM4GjqYugonlTjY'
-output = 'models/eca_nfnet_l0_2d_classification/FLAIR/FLAIR_Fold0_eca_nfnet_l0_2d_clf_classification.pth'
+output = 'models/eca_nfnet_l0_2d_classification/FLAIR/FLAIR_Fold0_eca_nfnet_l0_2d_classification.pth'
 gdown.download(url, output, quiet=False)
