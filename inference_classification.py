@@ -63,21 +63,21 @@ CLF_CANDIDATES = [
         'model_path':os.path.join(SETTINGS['CLASSIFICATION_MODEL_DIR'], 'FLAIR' ,'FLAIR_Fold0_eca_nfnet_l0_2d_classification.pth'),
         'mri_type':"flair"
     },
-#     {
-#         'backbone_name':'eca_nfnet_l0',
-#         'model_path':'../input/brain2dclflstm/Fold0_eca_nfnet_l0_2d_clf_v6_lstm_data_v5_ValidLoss0.662_ValidAUC0.642_Ep09.pth',
-#         'mri_type':"t1"
-#     },
-#    {
-#         'backbone_name':'eca_nfnet_l0',
-#         'model_path':'../input/brain2dclflstm/Fold0_eca_nfnet_l0_2d_clf_v6_lstm_data_v5_ValidLoss0.684_ValidAUC0.555_Ep09.pth',
-#         'mri_type':"t1ce"
-#     },
-#     {
-#         'backbone_name':'eca_nfnet_l0',
-#         'model_path':'../input/brain2dclflstm/Fold0_eca_nfnet_l0_2d_clf_v6_lstm_data_v5_ValidLoss0.604_ValidAUC0.523_Ep08.pth',
-#         'mri_type':"t2"
-#     },
+    {
+        'backbone_name':'eca_nfnet_l0',
+        'model_path':os.path.join(SETTINGS['CLASSIFICATION_MODEL_DIR'], 'T1w' ,'T1w_Fold0_eca_nfnet_l0_2d_classification.pth'),
+        'mri_type':"t1"
+    },
+   {
+        'backbone_name':'eca_nfnet_l0',
+        'model_path':os.path.join(SETTINGS['CLASSIFICATION_MODEL_DIR'], 'T1wCE' ,'T1wCE_Fold0_eca_nfnet_l0_2d_classification.pth'),
+        'mri_type':"t1ce"
+    },
+    {
+        'backbone_name':'eca_nfnet_l0',
+        'model_path':os.path.join(SETTINGS['CLASSIFICATION_MODEL_DIR'], 'T2w' ,'T2w_Fold0_eca_nfnet_l0_2d_classification.pth'),
+        'mri_type':"t2"
+    },
 ]
 
 
