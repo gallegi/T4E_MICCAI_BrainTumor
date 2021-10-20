@@ -179,6 +179,9 @@ fold_df = pd.read_csv(KFOLD_PATH)
 fold_df['pfolder'] = fold_df.BraTS21ID.map(lambda x: f'BraTS2021_{x:05d}')
 
 df = pd.DataFrame(os.listdir(IM_FOLDER_TASK1), columns=['pfolder'])
+
+print(df)
+
 df['BraTS21ID'] = df['pfolder'].map(lambda x: int(x.split('_')[-1]))
 
 df = df[~df.BraTS21ID.isin(fold_df.BraTS21ID.tolist())]
