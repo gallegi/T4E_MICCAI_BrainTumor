@@ -5,7 +5,7 @@ import cv2
 import torch
 
 import os
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 import pydicom
 import glob
@@ -30,6 +30,8 @@ parser.add_argument('--segment_batch_size', type=int,
                     help='Segmentation batch size', default=64)
 parser.add_argument('--n_workers', type=int,
                     help='Number of parrallel workers', default=8)
+parser.add_argument('--fast_sub', type=int,
+                    help='Whether to perform prediction on only 3 patients', default=1)                    
 args = parser.parse_args()
 
 with open('SETTINGS.json', 'r') as f:
@@ -50,7 +52,7 @@ DIM = (224,224,3)
 SEG_BATCH_SIZE = args.segment_batch_size
 CLF_BATCH_SIZE = args.classification_batch_size
 
-FAST_SUB = True
+FAST_SUB = args.fast_sub == 1
 
 SEG_MODEL = {
         'backbone_name':'densenet121',
@@ -82,7 +84,7 @@ CLF_CANDIDATES = [
 
 
 
-
+# ============================= Helper functions =================================
 def get_seg_model(candidate):
     model = UnetPlusPlus(
         encoder_name = candidate['backbone_name'],
@@ -112,6 +114,7 @@ def get_transform(candidate, spatial_only=False):
     return A.Compose(list_trans)
 
 def get_inv_transform(original_w, original_h, candidate):
+    '''Inverse the transform to get original image'''
     dim = candidate.get('dim', DIM)
     list_trans = [
                 A.PadIfNeeded(min_height=int(dim[1]*1.2), min_width=int(dim[1]*1.2), always_apply=True),
@@ -130,11 +133,13 @@ def check_empty(img, min_avg=0.1):
     if(_mean > min_avg):
         return True
     return False
+
 def find_largest_countours(contours):
     max_cnt = max(contours, key=lambda cnt: cv2.contourArea(cnt))
     return max_cnt
 
 def has_good_features(image, mask, area_mask_over_image_min_ratio=0.1, max_count_mask_contours=5):
+    '''Determine if an image has a tumor which is large enough'''
     _, image_thresh = cv2.threshold(image,1,255,cv2.THRESH_BINARY)
     image_contours, _ = cv2.findContours(image=image_thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
     max_image_cnt = find_largest_countours(image_contours)
@@ -155,6 +160,7 @@ def has_good_features(image, mask, area_mask_over_image_min_ratio=0.1, max_count
         return False
 
 def batch_predict_mask(data_loader, model):
+    '''Segment tumor masks by batch'''
     batch_out = []
     for batch_input in data_loader:
         batch_input = batch_input.to(DEVICE)
@@ -191,6 +197,7 @@ def error(e):
     print(e)
     
 def read_and_preprocess_voxels_update(args):
+    '''Update each voxels of each mri type of each patient'''
     if(args!=[]):
         voxels, mri_type, images = args
         global all_transformed_images, corresponding_mri_types, all_images
@@ -199,6 +206,7 @@ def read_and_preprocess_voxels_update(args):
         all_images += images
 
 def read_and_preprocess_voxels(patient_id, mri_type, ext='.dcm'):
+    '''Read and update each voxels of each mri type of each patient'''
     paths = glob.glob(os.path.join(DICOM_IM_FOLDER, patient_id, mri_type, '*'+ext))
     paths = sorted(paths, key=lambda x: int(x.replace(ext,'').split("-")[-1]))
     positions = []
@@ -223,7 +231,7 @@ def read_and_preprocess_voxels(patient_id, mri_type, ext='.dcm'):
         
     
 def sampling_one_image(patient_id, slice_index, image, out, mri_type):
-
+    '''Pack image with segmented masks to save it to file'''
     mask_0, mask_1 = out[0], out[1]
     inv_transforms = get_inv_transform(image.shape[1], image.shape[0], SEG_MODEL)
     mask_0_original_size = inv_transforms(image=mask_0)['image']
@@ -273,10 +281,8 @@ def expand(row):
     list_files = row['chunk_file_paths']
     return pd.DataFrame({
         'BraTS21ID':[row['BraTS21ID']]*len(list_files),
-#         'MGMT_value':[row['MGMT_value']]*len(list_files),
         'mri_type':[row['mri_type']]*len(list_files),
         'file_path':list_files,
-#         'fold':[row['fold']]*len(list_files)
     })
 
 def get_first_value(df, col_name):
@@ -291,11 +297,11 @@ def process_df_mri_type(df_mri):
     df_mri_group_expand = df_mri_group.apply(expand, axis=1).tolist()
     df_mri_group_expand = pd.concat(df_mri_group_expand)
 
-#     for col_name in ['MGMT_value', 'mri_type', 'fold']:
     for col_name in ['mri_type']:
         get_first_value(df_mri_group_expand, col_name)
         
     return df_mri_group_expand
+
 class BrainClassification2DDataset(torch.utils.data.Dataset):
     
     def __init__(self, csv, transforms=None):
@@ -361,19 +367,6 @@ def get_clf_transforms(candidate):
         ],
         additional_targets=additional_targets
     )
-
-
-def dfs_freeze(module):
-    for name, child in module.named_children():
-        for param in child.parameters():
-            param.requires_grad = False
-        dfs_freeze(child)
-        
-def dfs_unfreeze(module):
-    for name, child in module.named_children():
-        for param in child.parameters():
-            param.requires_grad = True
-        dfs_unfreeze(child)
 
 import timm
 from torch import nn
@@ -478,8 +471,10 @@ def predict_fn(dataloader,model, scaler, device='cuda:0'):
     
     
     return all_predictions
+# ============================================================================================
 
 
+# ============================== Segmentation phase ==========================================
 seg_model = get_seg_model(SEG_MODEL)
 seg_model.load_state_dict(torch.load(SEG_MODEL['model_path'], map_location='cpu'))
 seg_model.to(DEVICE)
@@ -510,8 +505,9 @@ for patient_id in tqdm(iterations):
     corresponding_mri_types = []
     all_images = []
     
-    pool = Pool(processes=4)   
+    pool = Pool(processes=N_WORKERS)   
 
+    # read and preprocess images
     for mri_type in MRI_TYPES:
         pool.apply_async(
             read_and_preprocess_voxels,
@@ -529,6 +525,7 @@ for patient_id in tqdm(iterations):
     
     s2 = time.time()
     
+    # perform segmentation to get tumor masks
     transform = get_transform(SEG_MODEL)  # transform for segmentation input
     seg_infer_ds = BrainSegmentationInferDataset(all_transformed_images, transform)
     seg_infer_loader = torch.utils.data.DataLoader(seg_infer_ds, batch_size=SEG_BATCH_SIZE, shuffle=False,
@@ -540,7 +537,7 @@ for patient_id in tqdm(iterations):
     s3 = time.time()
 
     # sampling slices by mask area
-    pool = Pool(processes=8)   
+    pool = Pool(processes=N_WORKERS)   
     
     for i in range(len(all_images)):
         image = all_images[i]
@@ -562,8 +559,7 @@ for patient_id in tqdm(iterations):
         
     e3 = time.time()
 
-    print(f'Patial time: read time: {e1-s1}. mask pred time: {e2-s2}. sampling time: {e3-s3}')
-
+    # print(f'Patial time: read time: {e1-s1}. mask pred time: {e2-s2}. sampling time: {e3-s3}')
 
 
 df = pd.DataFrame({
@@ -574,7 +570,10 @@ df = pd.DataFrame({
 })
 
 df.to_csv(os.path.join(IM_FOLDER, 'meta_classification.csv'), index=False)
+# =================================================================================================
 
+
+# =================================== Classification phase =========================================
 df_flair = df[df.mri_type=='FLAIR']
 df_t1 = df[df.mri_type=='T1w']
 df_t1ce = df[df.mri_type=='T1wCE']
@@ -632,7 +631,6 @@ sub_df = pd.concat(sub_df, axis=1).mean(axis=1).reset_index()
 sub_df.columns = ['BraTS21ID', 'MGMT_value']
 sub_df.to_csv(os.path.join(SETTINGS['TEST_PREDICTION_FILE']), index=False)
 
-
-
+# ====================================================================================================
 
 
