@@ -1,6 +1,6 @@
 {
     "DICOM_DATA_DIR":"data/raw_dicom_data/",
-    "TASK1_DIR":"data/task1_data/BraTS2021_Training_Data/", 
+    "TASK1_DIR":"data/task1_data/", 
     "CLASSIFICATION_RAW_JPG":"data/raw_jpg_data/data/",
     "SEGMENT_DATA_DIR":"data/processed_segmentation_data", 
     "CLASSIFICATION_DATA_DIR":"data/processed_classification_data",
