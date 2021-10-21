@@ -82,7 +82,7 @@ We were pretty confident with the segmentation model because the results it outp
 
 While training we found that the classification model could quickly go overfiting, we still think that this task need more data to be trained on, before we can conclude that whether or not this is feasible in practice.
 
-**Note that the AUC is calulated among patients, which requires averaging predictions of all chunks belong to each patient to obtain that person's prediciton.**
+**Note that the AUC is calculated among patients, which requires averaging predictions of all chunks belong to each patient to obtain that person's prediciton.**
 
 ## 8. How to train and run inference
 ### 8.1. Quick inference on RSNA MICCAI Brain Tumor challenge test set
@@ -117,7 +117,7 @@ While training we found that the classification model could quickly go overfitin
 
 ## 9. Final submission notebook
 - Original submission notebook at: [T4E Final Submiision](https://www.kaggle.com/namgalielei/ensemble-brainlstm-v6-tta-zoomin/notebook)
-- Notebook after update dataset versionl [T4E Final Submiision Update DS](https://www.kaggle.com/namgalielei/fix-deleted-data-ensemble-brainlstm-v6-tta-zoomin)
+- Notebook after update dataset version [T4E Final Submiision Update DS](https://www.kaggle.com/namgalielei/fix-deleted-data-ensemble-brainlstm-v6-tta-zoomin)
 
 ## 10. What did not work
 - We have spent a lot of time and with many different approaches but it did not work, or at least we were not able to make it work.
