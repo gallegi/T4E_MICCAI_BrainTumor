@@ -116,7 +116,8 @@ While training we found that the classification model could quickly go overfitin
 
 
 ## 9. Final submission notebook
-- Please visit our notebook at: [T4E Final Submiision]()
+- Original submission notebook at: [T4E Final Submiision](https://www.kaggle.com/namgalielei/ensemble-brainlstm-v6-tta-zoomin/notebook)
+- Notebook after update dataset versionl [T4E Final Submiision Update DS](https://www.kaggle.com/namgalielei/fix-deleted-data-ensemble-brainlstm-v6-tta-zoomin)
 
 ## 10. What did not work
 - We have spent a lot of time and with many different approaches but it did not work, or at least we were not able to make it work.

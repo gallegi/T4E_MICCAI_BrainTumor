@@ -17,6 +17,8 @@ from monai.transforms import (
 )
 from monai.data import DataLoader, ImageDataset
 
+from sklearn.model_selection import GroupKFold
+
 import torch.nn.functional as F
 
 from multiprocessing import Pool
@@ -272,10 +274,10 @@ out_df.to_csv(os.path.join(OUT_FOLDER, 'segment_meta.csv'))
 kfold = GroupKFold(n_splits=5)
 
 i = 0
-for train_ind, valid_ind in kfold.split(df,df,df['BraTS21ID']):
-    df.loc[valid_ind, 'fold'] = i
+for train_ind, valid_ind in kfold.split(out_df,out_df,out_df['BraTS21ID']):
+    out_df.loc[valid_ind, 'fold'] = i
     i+=1
-df.to_csv(f'{OUT_FOLDER}/segment_meta_groupkfold.csv', index=False)
+out_df.to_csv(f'{OUT_FOLDER}/segment_meta_groupkfold.csv', index=False)
 # ==================================================
     
     
