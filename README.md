@@ -47,20 +47,20 @@ Our best model on the private leaderboard is the one that combined a 2 stage tra
 ![Stage 2 Image](images/Stage2.png)
 
 ### 6.2. Stage 1 detail
-- There is a parrallel track held by the same host called Task 1, besides Task 2 which was host on Kaggle. The dataset is provided in 3D arrays with shape (240,240,155), stored in nii.gz files.
-- Remove data of patients overlapping with those Task 2 data: Task 1 data has 1251 samples corresponding to 1251 unique patients. However, there are about 574 patients with IDs overlapping with Task 2 data. In order to prevent data leakage, it was safer to remove data of overlapping patients. Thus, only the non-overlapping part was kept, which had about 677 3D samples.
+- There is a parrallel track held by the same host called Task 1, besides Task 2 which was hosted on Kaggle. The dataset is provided in 3D arrays with shape (240,240,155), stored in nii.gz files.
+- Remove data of patients overlapping with those in Task 2 data: Task 1 data has 1251 samples corresponding to 1251 unique patients. However, there are about 574 patients with IDs overlapping with Task 2 data. In order to prevent data leakage, it was safer to remove data of overlapping patients. Thus, only the non-overlapping part was kept, which had about 677 3D samples.
 - Data preparation: with each 3D sample, we extracted 2D slices and their corresponding masks from each plane: Coronal, Sagital and Axial. To illustrate, if there are 600 3D samples, 4 MRI types each, and within each 3D sample we were able to extract 100 slices, then the total 2D images received is 600x4x100. 
-- Sampling: Because nearby slices in the same plane are usually very similar to each other, we used a sampling method to keep only relatively distinct images. We believed that it did no harm for training the model, and certainly reduce the training time.
-- Filtering: Only images with tumor area over brain area over 1/10 were kept. We think that would make the model model stable during training
+- Sampling: Because nearby slices in the same plane are usually very similar to each other, we used a sampling method to keep only relatively distinct images. We believed that it did no harm for training the model, and certainly reduced the training time.
+- Filtering: Only images with tumor area over brain area over 0.01 were kept. We think that would make the model model stable during training
 - Image size: 224x224x3
-- Mask: Refer to the competition paper [1], we constructed 2 types of masks for each 2D image: Whole Tumor (WT) and Enhancing Tumor (ET). WT represents the morphology of the whole tumor while enhancing tumor is the middle layer be wrapping the necrotic part to form the tumor core.
+- Mask: Refer to the competition paper [1], we constructed 2 types of masks for each 2D image: Whole Tumor (WT) and Enhancing Tumor (ET). WT represents the morphology of the whole tumor while ET is the middle layer be wrapping the necrotic part to form the tumor core.
 - Model: Densenet121 backbone with a linear classifier layer at top, pretrained on imagenet
 - Training: All images regardless of mri types and planes after the filtering step above are used. Note that a set of 20% patient was held out to validate the model during training. At first, the backbone was freezed to warm up in 10 epochs, then, we unfreezed it and trained to more than 180 epochs when the improvement are minor. 
 
 ### 6.3. Stage 2 detail
 - Data preparation: Using the trained segmentation model on Task 2 data to generate 2 types of mentioned masks, we concatenated them with the original image to create 3-channel 2D images as the input for this second stage.
 - Filtering: We used the predicted masks to determine which images should be kept during training. Only images with predicted tumor area over brain area larger than 0.025 were considered as informative. Besides, we also decided to remove ones with total number of separated tumor contours more than 5 to avoid noises, because it was unlikely that we have a brain with multiple tumors.
-- Chunking: By using LSTM, we inputed a series of 3-channel images into the model at the same time, we needed to determine how many *time-step* per series. By viewing the distribution of number of images in each series and some tuning, we decided that the sequence length was 35. This would not be an optimal one, but we found the result acceptable. Larger sequence lenght might lead to unstable training and much resource comsumption. So, for each series, we create consecutive 35-step chunks with stride 5 and treated them as independent samples when training.
+- Chunking: By using LSTM, we inputed a series of 3-channel images into the model at the same time, we needed to determine how many *time-step* per series. By viewing the distribution of number of images in each series and after doing some tuning, we decided that the sequence length was 35. This would not be an optimal one, but we found the result acceptable. Larger sequence lenght might lead to unstable training and much resource comsumption. So, for each series, we create consecutive 35-step chunks with stride 5 and treated them as independent samples when training.
 - Image: 224x224x3
 - Model: Biderectional LSTM with Eca nfnet l0 backbone extractor. The backbone is shared between time steps and output and embedding of size 2034. The hidden size of the LSTM cell is 64. All the embedding from all the time steps are concatenated before going to a linear classifier. 
 - Training: We trained a model for each MRI type separatedly, data from 20% patients was held out for validation. The backbone was freeze and warm up for 5 epochs before unfreezing and continued training. 
@@ -134,3 +134,6 @@ While training we found that the classification model could quickly go overfitin
 [4] segmentation model pytorch: https://github.com/qubvel/segmentation_models.pytorch 
 
 [5] timm: https://github.com/rwightman/pytorch-image-models
+
+## 12. Future issues
+If you find any problems running the code, or have any questions regarding the solution, please contact me at: namnguyen6101@gmail.com and create an issue on the Repo's Issue tab.
