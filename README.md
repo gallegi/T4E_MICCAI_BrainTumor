@@ -49,7 +49,7 @@ Our best model on the private leaderboard is the one that combined a 2 stage tra
 ### 6.2. Stage 1 detail
 - There is a parrallel track held by the same host called Task 1, besides Task 2 which was hosted on Kaggle. The dataset is provided in 3D arrays with shape (240,240,155), stored in nii.gz files.
 - Remove data of patients overlapping with those in Task 2 data: Task 1 data has 1251 samples corresponding to 1251 unique patients. However, there are about 574 patients with IDs overlapping with Task 2 data. In order to prevent data leakage, it was safer to remove data of overlapping patients. Thus, only the non-overlapping part was kept, which had about 677 3D samples.
-- Data preparation: with each 3D sample, we extracted 2D slices and their corresponding masks from each plane: Coronal, Sagital and Axial. To illustrate, if there are 600 3D samples, 4 MRI types each, and within each 3D sample we were able to extract 100 slices, then the total 2D images received is 600x4x100. 
+- Data preparation: with each 3D sample, we extracted 2D slices and their corresponding masks from each plane: Coronal, Sagital and Axial. To illustrate, if there are 600 3D samples, 4 MRI types each, 3 different plane views, and within each 3D sample we were able to extract 100 slices, then the total 2D images received is 600x4x3x100. 
 - Sampling: Because nearby slices in the same plane are usually very similar to each other, we used a sampling method to keep only relatively distinct images. We believed that it did no harm for training the model, and certainly reduced the training time.
 - Filtering: Only images with tumor area over brain area over 0.01 were kept. We think that would make the model model stable during training
 - Image size: 224x224x3
