@@ -65,6 +65,7 @@ Our best model on the private leaderboard is the one that combined a 2 stage tra
 - Model: Biderectional LSTM with Eca nfnet l0 backbone extractor. The backbone is shared between time steps and output and embedding of size 2034. The hidden size of the LSTM cell is 64. All the embedding from all the time steps are concatenated before going to a linear classifier. 
 - Training: We trained a model for each MRI type separatedly, data from 20% patients was held out for validation. The backbone was freeze and warm up for 5 epochs before unfreezing and continued training. 
 - Inference: Because we splitted 1 series of 1 patients to many chunks, the final prediction of 1 patient was the average of all the probability outputs of those chunks. We observe that this kind of *emsembling* make the model more robust. 
+- TTA: Specific for test set, we checked that the ratio of tumor area over brain area was smaller in some cases, so we decided use TTA Zoom In 1.2 as the post processing step.
   
 ## 7. Result and observation:
 ### Stage 1 result
