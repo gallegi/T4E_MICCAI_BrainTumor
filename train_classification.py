@@ -62,7 +62,7 @@ PATIENT = 10
 SAMPLE = None
 DEVICE = torch.device(f'cuda:{args.gpu}')
 
-PARENT_OUT_FOLDER = SETTINGS['CLASSIFICATION_MODEL_DIR']   
+PARENT_OUT_FOLDER = 'models/'   
 
 CANDIDATES = [
     {
@@ -473,7 +473,7 @@ for candidate in CANDIDATES:
                     patient = PATIENT # reset patient
 
                     # save model
-                    name = os.path.join(out_folder, f'{mri_type}_Fold%d_%s.pth'%(mri_type, valid_fold, out_folder_name))
+                    name = os.path.join(out_folder, f'%s_Fold%d_%s.pth'%(mri_type, valid_fold, out_folder_name))
                     log_and_print(logger, 'Saving model to: ' + name)
                     torch.save(model.state_dict(), name)
                 else:

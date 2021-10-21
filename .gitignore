@@ -154,3 +154,11 @@ dmypy.json
 cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks
+
+
+./data/raw_dicom_data/*
+./data/raw_jpg_data/*
+./data/task1_data/*
+
+./models/densenet121_2d_segment/*
+./models/eca_nfnet_l0_2d_classification/*

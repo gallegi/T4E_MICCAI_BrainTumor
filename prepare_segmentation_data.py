@@ -115,7 +115,7 @@ def process_one_patient(voxels, masks, patient_id):
     for ax, plane in enumerate(PLANES):
         non_0_voxels, non_0_masks = get_non_0_voxels_and_masks(voxels, masks, ax=ax)
         if(non_0_voxels.shape[ax]==0):
-            print(f'Cannot get any slice in patient: {patient_id}, plane: {plane} due to the masks are to small')
+            print(f'Cannot get any slice in patient: {patient_id}, plane: {plane} due to the masks are too small')
             continue
         sampled_non_0_voxels, sampled_non_0_masks = sampling_slices(non_0_voxels, non_0_masks, ax=ax)
 
@@ -178,11 +178,18 @@ def error(e):
 fold_df = pd.read_csv(KFOLD_PATH)
 fold_df['pfolder'] = fold_df.BraTS21ID.map(lambda x: f'BraTS2021_{x:05d}')
 
-df = pd.DataFrame(os.listdir(IM_FOLDER_TASK1), columns=['pfolder'])
+PATIENT_DIRS = []
+for p in os.listdir(IM_FOLDER_TASK1):
+    try:
+        int(p.split('_')[-1])
+        PATIENT_DIRS.append(p)
+    except:
+        print('Non patient dir:', p)
 
-print(df)
+df = pd.DataFrame(PATIENT_DIRS, columns=['pfolder'])
 
-df['BraTS21ID'] = df['pfolder'].map(lambda x: int(x.split('_')[-1]) if x.startswith('BraTS2021_') else np.nan)
+
+df['BraTS21ID'] = df['pfolder'].map(lambda x: int(x.split('_')[-1]))
 df = df.dropna()
 
 df = df[~df.BraTS21ID.isin(fold_df.BraTS21ID.tolist())]
