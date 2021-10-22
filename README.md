@@ -51,9 +51,9 @@ Our best model on the private leaderboard is the one that combined a 2 stage tra
 - Remove data of patients overlapping with those in Task 2 data: Task 1 data has 1251 samples corresponding to 1251 unique patients. However, there are about 574 patients with IDs overlapping with Task 2 data. In order to prevent data leakage, it was safer to remove data of overlapping patients. Thus, only the non-overlapping part was kept, which had about 677 3D samples.
 - Data preparation: with each 3D sample, we extracted 2D slices and their corresponding masks from each plane: Coronal, Sagital and Axial. To illustrate, if there are 600 3D samples, 4 MRI types each, 3 different plane views, and within each 3D sample we were able to extract 100 slices, then the total 2D images received is 600x4x3x100. 
 - Sampling: Because nearby slices in the same plane are usually very similar to each other, we used a sampling method to keep only relatively distinct images. We believed that it did no harm for training the model, and certainly reduced the training time.
-- Filtering: Only images with tumor area over brain area over 0.01 were kept. We think that would make the model model stable during training
+- Filtering: Only images with tumor area over brain area more than 0.01 were kept. We think that would make the model model stable during training
 - Image size: 224x224x3
-- Mask: Refer to the competition paper [1], we constructed 2 types of masks for each 2D image: Whole Tumor (WT) and Enhancing Tumor (ET). WT represents the morphology of the whole tumor while ET is the middle layer be wrapping the necrotic part to form the tumor core.
+- Mask: Refer to the competition paper [1], we constructed 2 types of masks for each 2D image: Whole Tumor (WT) and Enhancing Tumor (ET). WT represents the morphology of the whole tumor while ET is the middle layer wrapping the necrotic part to form the tumor core.
 - Model: Densenet121 backbone with a linear classifier layer at top, pretrained on imagenet
 - Training: All images regardless of mri types and planes after the filtering step above are used. Note that a set of 20% patient was held out to validate the model during training. At first, the backbone was freezed to warm up in 10 epochs, then, we unfreezed it and trained to more than 180 epochs when the improvement are minor. 
 
