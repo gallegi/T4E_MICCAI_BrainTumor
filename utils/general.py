@@ -8,12 +8,8 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import logging
-sys.path.append('/tf/show-us-the-data/utils/')
 
-from transformers import AutoTokenizer
 from tqdm import tqdm
-from coleridge_datasets import ColeridgePredictDataset
-from nltk import sent_tokenize
 from copy import deepcopy
 from typing import List
 
