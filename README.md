@@ -111,7 +111,9 @@ While training we found that the classification model could quickly go overfitin
     python prepare_classification.py --gpu <gpu id> --batch_size <bs> --n_workers <nw>
 ````
 - Train classification model. This will create folder: models/eca_nfnet_l0_2d_classification. **NOTE: It will overwrite the prexisting weights and training log files in this folder**
-  
+````
+    python train_classification.py --gpu <gpu id> --batch_size <bs> --n_workers <nw>
+````
 **Note that the log you see on training did not reflect the patient AUC, instead it was the chunk AUC. To get the patient AUC you need to average the prediction of all the chunk belonging to that patient.**
 
 
